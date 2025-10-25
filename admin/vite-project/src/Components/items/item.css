@@ -10,6 +10,12 @@
     border-radius: 6px;
     background-color: white;
 }
+.setPopular{
+    transition: transform 0.1s ease-in-out;
+}
+.setPopular:active{
+    transform: scale(0.45);
+}
 .listproduct-format-main{
     display: grid;
     grid-template-columns: 1fr 3fr 1fr 1fr 1fr 1fr 1fr;
