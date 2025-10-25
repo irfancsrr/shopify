@@ -21,6 +21,13 @@ const Sidebar = () => {
           <p>Product List</p>
         </div>
       </Link>
+
+      <Link to={"/promocode"} style={{ textDecoration: "none" }}>
+        <div className="sidebar-item">
+          {/* <img src={list_product}/> */}
+          <p>Add PromoCode</p>
+        </div>
+      </Link>
     </div>
   );
 };

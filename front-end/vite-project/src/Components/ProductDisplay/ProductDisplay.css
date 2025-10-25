@@ -1,6 +1,7 @@
 .productdisplay-main-container {
   display: flex;
   margin: 0px 100px;
+  overflow: hidden;
 }
 
 .productdisplay-left {
@@ -15,7 +16,12 @@
   margin-top: 20px;
   /* background: #312d2d; */
 }
-
+.addtocardbutton{
+  transition: transform 0.1s ease-in-out;
+}
+.addtocardbutton:active{
+  transform: scale(0.58);
+}
 .productdisplay-img-list img {
   height: 163px;
   /* border: 2px solid black; */

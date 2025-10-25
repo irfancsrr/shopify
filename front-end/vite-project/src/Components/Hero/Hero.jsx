@@ -21,8 +21,10 @@ const Hero = () => {
         </div>
 
         <div className="hero-latest-btn">
+          <a href="#NewCollection" style={{textDecoration:"none"}} className="hero-latest-btn">
           <div>Latest Collection</div>
           <img src={arrow_icon}  width='20%'  alt="arrow-icon" />
+          </a>
         </div>
       </div>
 

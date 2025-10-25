@@ -12,13 +12,13 @@ const Product = () => {
   const {productId} = useParams();
 
   const product = allproduct.find((e)=> e.id === Number(productId));
-
+  // console.log(product._id);
   return (
     <div>
       <Breadcrum product={product} />
       <ProductDisplay product={product} />
       <DescriptionBox/>
-      <RelatedProduct/>
+      <RelatedProduct category={product.category}/>
     </div>
   )
 }

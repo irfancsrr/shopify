@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import './listproduct.css'
-// import
-import remove_icon from "../../assets/remove_icon.png";
+// import './listproduct.css'
+import "./ListProduct.css";
+import Item from '../items/item';
 
 const ListProduct = () => {
  
   const [allproduct,setAllProducts] = useState([]);
-
+    
   const fetchInfo = async() => {
-    await fetch('http://localhost:4000/allproducts').then((res)=>res.json()).then((data)=>{setAllProducts(data)});
+    await fetch('https://back-end-1gp5.onrender.com/allproducts').then((res)=>res.json()).then((data)=>{setAllProducts(data)});
 
   }
+  //
    useEffect(() =>{
       fetchInfo();
     },[])
-
+// 
     const removeproduct = async(id)=>{
-      await fetch('http://localhost:4000/removeproduct',{
+      await fetch('https://back-end-1gp5.onrender.com/removeproduct',{
         method:'POST',
         headers:{
           Accept:'application/json',
@@ -36,19 +37,15 @@ const ListProduct = () => {
         <p>New Price</p>
         <p>Category</p>
         <p>Remove</p>
+        <p>populer</p>
+
       </div>
       <div className="listproduct-allproduct">
         <hr/>
         {allproduct.map((product,index) =>{
           return <>    
-            <div key={index} className="listproduct-format-main listproduct-format" >
-            <img src={product.image}  className="listproduct-product-icon" />
-            <p>{product.name}</p>
-            <p>${product.old_price}</p>
-            <p>${product.new_price}</p>
-            <p>{product.category}</p>
-            <img onClick={()=>{removeproduct(product.id)}} className='listproduct-remove-icon' src={remove_icon} />
-          </div> 
+           
+          <Item product={product} Index={index}/>
           <hr/>
           </>
 

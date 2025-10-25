@@ -4,14 +4,15 @@ import logo from "../Assets/logo.png";
 import insta_icon from "../Assets/insta_icon.png"
 import linkedln_icon from "../Assets/linkedln_icon.png"
 import wb_icon from "../Assets/wb_icon.png"
+import { useNavigate } from "react-router-dom";
 
 
 const Footer = () => {
   return (
     <div className="Footer-main-container">
-      <div className="footer-logo">
+      <div className="footer-logo" style={{cursor:"pointer"}} onClick={()=>{window.scrollTo(0,0); window.location.replace('/')}}>
         <img src={logo }  width="90px" height="65px" alt="footer-logo" />
-        <p>SHOPPER</p>
+        <p>SHOPIFY</p>
       </div>
       <ul className="footer-links">
         <li>Company</li>

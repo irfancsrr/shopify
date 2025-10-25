@@ -12,16 +12,16 @@ const getDefaultCart = () => {
 };
 
 const ShopContextProvider = (props) => {
-  const [allproduct, setAllProduct] = useState([]);
+  const [allproduct, setAllProduct] = useState(null);
   const [cartItems, setCartItems] = useState(getDefaultCart());
-
+  const [isLoggedIn,setIsLoggedIn]=useState(false);     
+  
   useEffect(() => {
-    fetch("http://localhost:4000/allproducts")
+    fetch("https://back-end-1gp5.onrender.com/allproducts")
       .then((response) => response.json())
       .then((data) => setAllProduct(data));
-
       if(localStorage.getItem('auth-token')){
-        fetch('http://localhost:4000/getcart',{
+        fetch('https://back-end-1gp5.onrender.com/getcart',{
           method:'POST',
           headers:{
             Accept:"application/form-data",
@@ -29,15 +29,16 @@ const ShopContextProvider = (props) => {
             "Content-Type":"application/json",
           },
           body:"",
-        }).then((response)=>response.json()).then((data)=>setCartItems(data));
+        }).then((response)=>response.json()).then((data)=>{setCartItems(data); });
       }
 
-  }, []);
+  }, [isLoggedIn]);
 
   const addToCart = (itemId) => {
     setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
     if (localStorage.getItem("auth-token")) {
-      fetch("http://localhost:4000/addtocart", {
+      // console.log(localStorage.getItem("auth-token"));
+      fetch("https://back-end-1gp5.onrender.com/addtocart", {
         method: "POST",
         headers: {
           Accept: "application/form-Data",
@@ -54,7 +55,7 @@ const ShopContextProvider = (props) => {
   const removeFromCart = (itemId) => {
     setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
     if (localStorage.getItem("auth-token")) {
-      fetch("http://localhost:4000/removefromcart", {
+      fetch("https://back-end-1gp5.onrender.com/removefromcart", {
         method: "POST",
         headers: {
           Accept: "application/form-Data",
@@ -98,6 +99,7 @@ const ShopContextProvider = (props) => {
     getTotalCartAmount,
     allproduct,
     cartItems,
+    setIsLoggedIn,
     addToCart,
     removeFromCart,
   };

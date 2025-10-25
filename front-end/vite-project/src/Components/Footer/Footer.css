@@ -3,15 +3,20 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  /* bottom: 0px; */
   gap: 50px;
 }
 
 .footer-logo {
   display: flex;
   align-items: center;
-  gap: 20px;
-}
+  gap: 20px;  
+  transition: transform 0.2s ease-in-out;
 
+}
+.footer-logo:active{
+  transform: scale(0.89);
+}
 .footer-logo p {
   color: #383838;
   font-size: 46px;

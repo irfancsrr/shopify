@@ -1,15 +1,14 @@
 import React from "react";
 import "./Popular.css";
-// import data_product from "../Assets/data";
 import Item from "../Item/Item";
 import { useState } from "react";
 import { useEffect } from "react";
 
 const Popular = () => {
-  const [popularProducts, setPopularProducts] = useState([]);
+  const [popularProducts, setPopularProducts] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:4000/popularinmen").then((response) =>
+    fetch("https://back-end-1gp5.onrender.com/popularinmen").then((response) =>
       response.json().then((data) => setPopularProducts(data))
     );
   }, []);
@@ -20,7 +19,8 @@ const Popular = () => {
       <hr />
 
       <div className="popular-item">
-        {popularProducts.map((item, i) => {
+        {popularProducts?
+        popularProducts.map((item, i) => {
           return (
             <Item
               key={i}
@@ -31,7 +31,7 @@ const Popular = () => {
               old_price={item.old_price}
             />
           );
-        })}
+        }):<div className="loader" style={{margin:"6em auto"}}></div>}
       </div>
     </div>
   );

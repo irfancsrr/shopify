@@ -7,21 +7,21 @@ import Item from "../Item/Item";
 const NewCollection = () => {
 
 
-  const [New_collection,setNew_collection] = useState([])
+  const [New_collection,setNew_collection] = useState(null)
 
   useEffect(()=>{
 
-    fetch('http://localhost:4000/newcollectioned').then((response)=>response.json()).then((data)=>setNew_collection(data))
+    fetch('https://back-end-1gp5.onrender.com/newcollectioned').then((response)=>response.json()).then((data)=>setNew_collection(data))
 
   },[])
 
   return (
-    <div className="NewCollection-main-container">
+    <div id="NewCollection" className="NewCollection-main-container">
       <h1>NEW COLLECTIONS</h1>
       <hr/>
       <div className="collections">
-        {New_collection.map((item, i) => {
-          return (
+        {New_collection?New_collection.map((item, i) => {
+          return (    
             <Item
               key={i}
               id={item.id}
@@ -31,7 +31,7 @@ const NewCollection = () => {
               old_price={item.old_price}
             />
           );
-        })}
+        }):<div className="loader" style={{margin:"6em auto"}}></div>}
       </div>
     </div>
   );

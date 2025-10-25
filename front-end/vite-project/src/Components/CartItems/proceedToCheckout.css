@@ -1,0 +1,108 @@
+.contact-form {
+  max-width: 700px;
+  /* margin: 40px ; */
+  padding: 30px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.contact-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.contact-form input {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+
+.contact-form input:focus {
+  border-color: #0078d4;
+  outline: none;
+}
+
+.contact-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease-in-out;
+}
+
+.contact-form button:hover {
+  background-color: #005fa3;
+}
+
+.contact-form button:active {
+  transform: scale(0.78);
+}
+
+/* Laptop/Desktop View */
+@media (min-width: 1024px) {
+  .contact-form {
+    max-width: 600px;
+    padding: 40px;
+  }
+
+  .contact-form input {
+    font-size: 16px;
+  }
+
+  .contact-form button {
+    font-size: 17px;
+    padding: 14px;
+  }
+}
+
+/* Tablet View */
+@media (max-width: 1023px) and (min-width: 481px) {
+  .contact-form {
+    max-width: 90%;
+    padding: 24px;
+    /* margin: 0px auto; */
+  }
+
+  .contact-form input {
+    font-size: 15px;
+  }
+
+  .contact-form button {
+    font-size: 15px;
+    padding: 12px;
+  }
+}
+
+/* Mobile View */
+@media (max-width: 480px) {
+  .contact-form {
+    max-width: 95%;
+    padding: 20px;
+    /* margin: 0px auto; */
+  }
+
+  .contact-form input {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .contact-form button {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .contact-form label {
+    font-size: 14px;
+  }
+}

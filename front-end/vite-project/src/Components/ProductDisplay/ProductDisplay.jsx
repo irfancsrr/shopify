@@ -1,13 +1,58 @@
-import React, { useContext } from 'react'
+import React, { use, useContext, useEffect, useState } from 'react'
 import './ProductDisplay.css'
 import { ShopContext } from '../../Context/ShopContext';
 import star_icon from "../Assets/star_icon.png";
 import star_dull_icon from "../Assets/star_dull_icon.png";
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const ProductDisplay = (props) => {
-
+    const navigateTO=useNavigate();
     const {product} = props;
-    const {addToCart} = useContext(ShopContext)
+    const {addToCart} = useContext(ShopContext);
+    const [liked,setLiked]=useState(false);
+    useEffect(()=>{
+        fetch("https://back-end-1gp5.onrender.com/isLikedItem", {
+        method: "POST",
+        headers: {  
+          Accept: "application/form-Data",
+          "Content-Type": "application/json",
+          "auth-token":`${localStorage.getItem("auth-token")}`,
+        },
+        body: JSON.stringify({ likedItemID: product._id }),
+      })
+        .then((response) => response.json())
+        .then((data) =>{ console.log(data);setLiked(data.success);});
+    },[navigateTO])
+    useEffect(()=>{
+        if(liked){
+            fetch("https://back-end-1gp5.onrender.com/likedItem", {
+        method: "POST",
+        headers: {
+          Accept: "application/form-Data",
+          "Content-Type": "application/json",
+          "auth-token":`${localStorage.getItem("auth-token")}`,
+        },
+        body: JSON.stringify({ productID: product._id }),
+      })
+        .then((response) => response.json())
+        .then((data) => console.log(data));
+        }
+        
+    },[liked])
+  const  handleRemoveLiked=()=>{
+       fetch("https://back-end-1gp5.onrender.com/removeLikedItem", {
+        method: "POST",
+        headers: {
+          Accept: "application/form-Data",
+          "Content-Type": "application/json",
+          "auth-token":`${localStorage.getItem("auth-token")}`,
+        },
+        body: JSON.stringify({ productID: product._id }),
+      })
+        .then((response) => response.json())
+        .then((data) => console.log(data));  
+    }
   return (
     <div className='productdisplay-main-container' > 
         <div className="productdisplay-left">
@@ -19,6 +64,14 @@ const ProductDisplay = (props) => {
             </div>
             <div className="productdisplay-img">
                 <img  className='productdisplay-main-img' src={product.image} alt="" />
+            </div>
+            <div style={{zIndex:"100",position:"absolute",top:"10em"}} onClick={()=>{
+                setLiked(!liked);
+
+                }}>
+            {liked?<FaHeart color="red" size={24} onClick={handleRemoveLiked} />:<FaRegHeart color="gray" size={24} />}       
+           
+
             </div>
         </div>
         <div className="productdisplay-right">
@@ -49,7 +102,9 @@ const ProductDisplay = (props) => {
                     <div>XXL</div>
                 </div>
             </div>
-            <button onClick={() => {addToCart(product.id)}} >Add to Cart</button>
+            <button className='addtocardbutton' onClick={() => {
+                // console.log(`product id ${product.id}`)
+                addToCart(product.id)}} >Add to Cart</button>
             <p className='productdisplay-right-category' > <span>Category:</span> Women , T-shirt, Crop Top </p>
             <p className='productdisplay-right-category' > <span>Tags:</span> Modern Latest </p>
         </div>

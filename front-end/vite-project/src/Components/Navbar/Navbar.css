@@ -1,4 +1,4 @@
-.Navbar_main_container {
+  .Navbar_main_container {
   display: flex;
   justify-content: space-around;
   padding: 16px;
@@ -10,6 +10,10 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: transform 0.2s ease-in-out; 
+}
+.nav-logo:active{
+  transform: scale(0.89);
 }
 
 .nav-logo p {
@@ -49,22 +53,38 @@
   align-items: center;
   gap: 25px;
 }
-
-.login-cart button {
-  width: 150px;
-  height: 50px;
-  outline: none;
-  border: 2px solid #7a7a7a;
-  border-radius: 50px;
-  color: #515151;
-  font-size: 25px;
-  font-weight: 500;
-  background: white;
+.heart-wrapper {
   cursor: pointer;
+  display: inline-block;
+  transition: transform 0.2s ease;
 }
 
+.heart-icon {
+  font-size: 24px;
+  color: gray;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.heart-wrapper.active .heart-icon {
+  color: red;
+  transform: scale(0.9);
+}
+
+  /* .login-cart button {
+    width: 150px;
+    height: 50px;
+    outline: none;
+    border: 2px solid #7a7a7a;
+    border-radius: 50px;
+    color: #515151;
+    font-size: 25px;
+    font-weight: 500;
+    background: white;
+    cursor: pointer;
+  } */
+
 .login-cart button:active {
-  background: #f3f3f3;
+  background: #c6b3b3 !important;
 }
 
 .nav-cart-count {

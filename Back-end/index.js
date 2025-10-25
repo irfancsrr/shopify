@@ -1,26 +1,30 @@
-const port = 4000;
+// import "dotenv/config";
+const port = process.env.PORT||4000;
 const express = require("express");
 const app = express();
 
 const mongoose = require("mongoose");
+
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
 const cors = require("cors");
 const { type } = require("os");
 const { error } = require("console");
+const { ref } = require("process");
 
 app.use(express.json());
+app.use(express.urlencoded({extended:false}));
 app.use(cors());
 
 // Database Connection with MongoDB
 mongoose.connect(
-  "mongodb+srv://abhimishra902687:1673656@cluster0.i9tyhpk.mongodb.net/e-commerce"
-);
+ "mongodb+srv://irfan_DB:Pratapgarh_100@irfancluster.ak2xgdr.mongodb.net/e-commerce"
+).then(data=>console.log("mongodb connected successfully")).catch(err=>console.log("mongodb connection failed"));
 
 // API Creation
 app.get("/", (req, res) => {
-  res.send("Express App is Running");
+  res.send("Express App is Running, do you get that");
 });
 
 // Image storage engine
@@ -40,14 +44,50 @@ const upload = multer({ storage: storage });
 app.use("/images", express.static("upload/images"));
 
 app.post("/upload", upload.single("product"), (req, res) => {
+  const backendBaseUrl = "https://back-end-1gp5.onrender.com" ;
+
   res.json({
     success: 1,
-    image_url: `http://localhost:${port}/images/${req.file.filename}`,
+    image_url: `${backendBaseUrl}/images/${req.file.filename}`,
   });
 });
 
-// Schema for Creating Products
+// creating middleware to fetch user
+const fetchUser = async (req, res, next) => {
+  const token = req.header("auth-token");
+  if (!token) {
+    res.status(401).send({ errors: "Please authenticate using valid token" });
+  } else {
+    try {
+      // console.log(token);
+      const data = jwt.verify(token, "secret_ecom");
+      req.user = data.user;
+      next();
+    } catch (error) {
+      res.status(401).send({ errors: "Please authenticate using valid token" });
+    }
+  }
+};
+//schema for promoCode
+const Promocode=mongoose.model('Promocode',{
+   promocode:{
+    type:String,
+    required:true,
+    unique:true
+   },
+   offamount:{
+    type:Number,
+    required:true
+   },
+   date: {
+    type: Number,
+    default: Date.now,
+  },
 
+})
+
+
+// Schema for Creating Products
 const Product = mongoose.model("Product", {
   id: {
     type: Number,
@@ -77,12 +117,128 @@ const Product = mongoose.model("Product", {
     type: Number,
     default: Date.now,
   },
+  popular: {
+    type: Boolean,
+    default: false
+  },
   avilable: {
     type: Boolean,
     default: true,
   },
 });
+// schema creating for user model
+const Users = mongoose.model("Users", {
+  name: {
+    type: String,
+  },
+  email: {
+    type: String,
+    unique: true,
+  },
+  cartData: {
+    type: Object,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+  likedItem: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product',
+      required: false
+    }
+  ]
 
+});
+//schema for orders
+const Order=mongoose.model("Order",{
+  email:{
+    type:String,
+    required:true,
+  },
+  contactNumber:{
+    type:Number,
+    required:true,
+  },
+  address:{
+    type:String,
+    required:true,
+  },
+  totalAmount:{
+    type:Number,
+    required:true
+  },
+  orderProduct: [
+  {
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product',
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    }
+  }
+]
+,
+  enrolledUser:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'Users',
+    required:false,
+  }
+})
+app.post('/addpromocode',async(req,res)=>{
+   const {promocode,offamount}=req.body;
+   try {
+   const promoCode=new Promocode({
+      promocode,offamount
+   })
+   await promoCode.save();
+   res.json({success:true,message:"promocodeAdded"}); 
+   } catch (error) {
+    console.log("promocode addition error");
+   res.json({success:false,message:"promocodeAdditionFailed"}); 
+
+   }
+   
+
+})
+
+app.post("/getOffamountByPromocode",async(req,res)=>{
+  const promo=await Promocode.findOne({promocode:req.body.promoValue});
+  res.json(promo);
+})
+app.post('/uploadOrder',fetchUser,async(req,res)=>{
+  // const productID=new mongoose.Types.ObjectId(req.body.productID);
+  const {orderProduct,email,phoneNumber,address,totalAmount}=req.body;
+  const userID=new mongoose.Types.ObjectId(req.user.id);
+  const order=new Order({
+      email,
+      address,
+      totalAmount,
+      contactNumber:phoneNumber,
+      orderProduct,     
+      enrolledUser:userID
+  });
+  console.log(order);
+  await order.save();
+   let cart = {};
+  for (let i = 0; i < 300; i++) {
+    cart[i] = 0;
+  }
+  await Users.findOneAndUpdate({_id:req.user.id},{
+    cartData:cart
+  })
+  res.json({success:true});
+  
+  
+})
 app.post("/addproduct", async (req, res) => {
   let products = await Product.find({});
   let id;
@@ -103,7 +259,7 @@ app.post("/addproduct", async (req, res) => {
     old_price: req.body.old_price,
   });
   console.log(product);
-
+ 
   await product.save();
   console.log("Saved");
 
@@ -112,7 +268,20 @@ app.post("/addproduct", async (req, res) => {
     name: req.body.name,
   });
 });
-
+app.post('/addpopuler',async(req,res)=>{
+   const item=await Product.findOneAndUpdate({ _id: req.body.id },{
+     popular:true  
+   });
+   console.log("updated",item.id);
+    res.json({success:true});   
+})
+app.post('/removepopuler',async(req,res)=>{
+   const item=await Product.findOneAndUpdate({ _id: req.body.id },{
+     popular:false  
+   });
+   console.log("updated",item.id);
+    res.json({success:true});   
+})
 // Creating API For deleting Products
 
 app.post("/removeproduct", async (req, res) => {
@@ -129,47 +298,33 @@ app.post("/removeproduct", async (req, res) => {
 app.get("/allproducts", async (req, res) => {
   let products = await Product.find({});
   console.log("All Products Reserved");
+
   res.send(products);
 });
 
-// schema creating for user model
-const Users = mongoose.model("Users", {
-  name: {
-    type: String,
-  },
-  email: {
-    type: String,
-    unique: true,
-  },
-  password: {
-    type: String,
-  },
-  cartData: {
-    type: Object,
-  },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-});
+
 
 // creating endpoint for registring the users
 app.post("/signup", async (req, res) => {
   let check = await Users.findOne({ email: req.body.email });
   if (check) {
-    return res.status(400).json({
-      success: false,
-      errors: "Users found with the same email address",
-    });
+    const data = {
+    user: {
+      id:check.id,
+    },
+  };
+  console.log(check.id);
+  const token = jwt.sign(data, "secret_ecom");
+  res.json({ success: true, token });
   }
-  let cart = {};
+  else{
+   let cart = {};
   for (let i = 0; i < 300; i++) {
     cart[i] = 0;
   }
   const user = new Users({
     name: req.body.username,
     email: req.body.email,
-    password: req.body.password,
     cartData: cart,
   });
 
@@ -177,33 +332,16 @@ app.post("/signup", async (req, res) => {
 
   const data = {
     user: {
-      id: user.id,
+      id:user.id,
     },
   };
+  console.log(user.id);
   const token = jwt.sign(data, "secret_ecom");
   res.json({ success: true, token });
+  }
+  
 });
 
-// creating endpoint for userlogin
-app.post("/login", async (req, res) => {
-  let user = await Users.findOne({ email: req.body.email });
-  if (user) {
-    const passcompare = req.body.password === user.password;
-    if (passcompare) {
-      const data = {
-        user: {
-          id: user.id,
-        },
-      };
-      const token = jwt.sign(data, "secret_ecom");
-      res.json({ success: true, token });
-    } else {
-      res.json({ success: false, errors: "Wrong Password" });
-    }
-  } else {
-    res.json({ success: false, errors: "Wrong Email Id" });
-  }
-});
 
 // Creating endpoint for newcollection data
 app.get("/newcollectioned", async (req, res) => {
@@ -215,27 +353,12 @@ app.get("/newcollectioned", async (req, res) => {
 
 //Endpoint for popular section
 app.get("/popularinmen", async (req, res) => {
-  let products = await Product.find({ category: "men" });
-  let popular_in_men = products.slice(8, 12);
+  let products = await Product.find({ popular: true });
+  
   console.log("Popular in men Fetched");
-  res.send(popular_in_men);
+  res.send(products);
 });
 
-// creating middleware to fetch user
-const fetchUser = async (req, res, next) => {
-  const token = req.header("auth-token");
-  if (!token) {
-    res.status(401).send({ errors: "Please authenticate using valid token" });
-  } else {
-    try {
-      const data = jwt.verify(token, "secret_ecom");
-      req.user = data.user;
-      next();
-    } catch (error) {
-      res.status(401).send({ errors: "Please authenticate using valid token" });
-    }
-  }
-};
 
 // Creating endpoint for adding product in cartdata
 app.post("/addtocart", fetchUser, async (req, res) => {
@@ -251,6 +374,36 @@ app.post("/addtocart", fetchUser, async (req, res) => {
   );
   res.send("Added");
 });
+app.post('/likedItem',fetchUser,async(req,res)=>{
+   await Users.findOneAndUpdate({_id:req.user.id},{
+    $addToSet:{likedItem:req.body.productID}},
+    {new:true});
+    res.json({success:true});
+    
+})
+app.post('/removeLikedItem',fetchUser,async(req,res)=>{
+  console.log(req.body.productID);
+  const productID=new mongoose.Types.ObjectId(req.body.productID);
+  console.log(productID);
+   await Users.findOneAndUpdate( {_id:req.user.id}, { $pull: { likedItem:productID } }, { new: true } ); 
+    res.json({success:true});   
+    
+});
+app.post("/isLikedItem",fetchUser,async (req,res)=>{
+  const isLikedItem=await Users.findOne({_id:req.user.id,likedItem:req.body.likedItemID})
+  if(isLikedItem){
+    console.log("islikedItem",isLikedItem);
+  res.json({success:true,isLikedItem});
+  }
+  else{
+    console.log("islikedItem",isLikedItem);
+  res.json({success:false,isLikedItem});
+  }
+}) 
+app.get('/getLikedItem',fetchUser,async(req,res)=>{
+  const likeditems=await Users.findOne({_id:req.user.id}).populate('likedItem');
+  res.json({success:true,likedItems:likeditems.likedItem});
+})
 
 // creating endpint to remove cartData
 app.post("/removefromcart", fetchUser, async (req, res) => {
@@ -272,9 +425,13 @@ app.post("/getcart", fetchUser, async (req, res) => {
   res.json(userData.cartData);
 });
 
-app.listen(port, (error) => {
+app.listen(port,async(error) => {
   if (!error) {
     console.log("Server Running on Port " + port);
+const orders = await Order.find({})
+  .populate('enrolledUser') // populate user
+  .populate('orderProduct.productId');
+  console.log(orders);
   } else {
     console.log("Error : " + error);
   }
