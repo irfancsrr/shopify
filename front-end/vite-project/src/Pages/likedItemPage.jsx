@@ -20,7 +20,7 @@ fetch("https://back-end-1gp5.onrender.com/getLikedItem", {
         });
   },[])
   return (
-    <div className="shopcategory">
+    <div className="likedCategory">
      
       <div className="shopcategory-products">
         {linkedProduct?linkedProduct.map((item, i) => {

@@ -45,7 +45,7 @@ const ListProduct = () => {
         {allproduct.map((product,index) =>{
           return <>    
            
-          <Item product={product} Index={index}/>
+          <Ite  m product={product} Index={index}/>
           <hr/>
           </>
 

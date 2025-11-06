@@ -3,6 +3,11 @@
   height: 100vh;
   background: #fce3fe;
   padding-top: 50px;
+
+}
+.container{
+  margin-top: 5em !important;
+  
 }
 
 .LoginSignup-container {

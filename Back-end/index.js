@@ -1,8 +1,8 @@
 // import "dotenv/config";
+const dotenv=require('dotenv/config')
 const port = process.env.PORT||4000;
 const express = require("express");
 const app = express();
-
 const mongoose = require("mongoose");
 
 const jwt = require("jsonwebtoken");
@@ -17,9 +17,10 @@ app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 app.use(cors());
 
+
 // Database Connection with MongoDB
 mongoose.connect(
- "mongodb+srv://irfan_DB:Pratapgarh_100@irfancluster.ak2xgdr.mongodb.net/e-commerce"
+ process.env.mongodbURL
 ).then(data=>console.log("mongodb connected successfully")).catch(err=>console.log("mongodb connection failed"));
 
 // API Creation
@@ -341,6 +342,82 @@ app.post("/signup", async (req, res) => {
   }
   
 });
+
+//creating end point for search data
+app.get("/search",async(req,res)=>{
+   const searchitem=req.query.searchItem;
+   let copystr=searchitem.toLowerCase().split(" ").filter(item=>{
+    if(!item.toLowerCase().includes('men')&&!item.toLowerCase().includes('women')&&!item.toLowerCase().includes('kid')&&!item.toLowerCase().includes('boy')&&!item.toLowerCase().includes('girl')&&item!='to'&&item!='of'&&item!='for'&&item!='the'&&item!='a'&&item!='is')
+      return item; 
+
+   });
+  
+  let expression=null;
+     if(/\bmen(?:'s|\w*)?\b/i.test(searchitem)){
+       expression=/\bmen(?:'s|\w*)?\b/i;
+     }
+     else if(/\bboy(?:'s|\w*)?\b/i.test(searchitem)){
+       expression=/\bboy(?:'s|\w*)?\b/i;
+     }
+     else  if(/\bwomen(?:'s|\w*)?\b/i.test(searchitem)){
+       expression=/\bwomen(?:'s|\w*)?\b/i;
+     }
+     else if(/\bkid(?:'s|\w*)?\b/i.test(searchitem)){
+       expression=/\bkid(?:'s|\w*)?\b/i;
+     }
+      else if(/\bgirl(?:'s|\w*)?\b/i.test(searchitem)){
+       expression=/\bgirl(?:'s|\w*)?\b/i;
+     }
+     
+
+   const allproducts=await Product.find({});
+   let resultproduct=allproducts.filter((item)=>{
+     
+      if(expression&&(expression.test(item.name)||expression.test(item.name)||expression.test(item.category)||expression.test(item.category)||expression.test(item.category))){
+        if(!copystr.length){
+
+          return item;
+        }
+        for(let element of copystr){
+          if(item.name.toLowerCase().includes(element))
+          {
+         
+            return item;
+          }
+          else if(/\bcloth(?:'s|\w*)?\b/i.test(element)){
+            return item;
+          }
+       
+          
+        }
+       
+      }
+      else if(!expression&&copystr){
+        
+         for(let element of copystr){
+          if(item.name.toLowerCase().includes(element))
+          {
+            // console.log(element);
+            return item;
+          }
+          else if(/\bcloth(?:'s|\w*)?\b/i.test(element)){
+            return item;
+          }
+          else{
+            return null
+          }
+        }
+        
+      }
+      
+      
+      else
+        return null;
+   })
+   console.log(resultproduct);
+ 
+   res.status(200).json(resultproduct);
+})
 
 
 // Creating endpoint for newcollection data

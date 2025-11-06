@@ -1,5 +1,7 @@
 .CartItems-main-container {
   margin: 100px 170px;
+  margin-top: 6em !important;
+
 }
 /* HTML: <div class="loader"></div> */
 .loader {

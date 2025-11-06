@@ -14,6 +14,7 @@ import men_banner from "./Components/Assets/men_banner.png"
 import banner2 from "./Components/Assets/banner2.png"
 import banner3 from "./Components/Assets/banner3.png"
 import LikedItemPage from "./Pages/likedItemPage";
+import SearchResult from "./Pages/searchResult";
 
 const App = () => {
   return (
@@ -24,6 +25,9 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Shop />}></Route>
           <Route path="/likedItems" element={<LikedItemPage/>}></Route>
+          <Route path="/searchResult/:searchItem" element={<SearchResult/>}></Route>
+
+          {/* <Route path="/searchResult/:searchItem" element={<SearchResult/>}></Route> */}
           <Route path="/allproducts" element={<ShopCategory  banner={men_banner} category="all" />}></Route>
           <Route path="/mens" element={<ShopCategory  banner={men_banner} category="men" />}></Route>
           <Route path="/womens" element={<ShopCategory  banner ={banner2} category="women" />} ></Route>
@@ -46,7 +50,7 @@ const App = () => {
 
 <Route
   path="/sign-in/*"
-  element={<div  style={{display:"flex",justifyContent:"center",alignItems:"center"}}><SignIn
+  element={<div  style={{display:"flex",justifyContent:"center",alignItems:"center",marginTop:'5em'}}><SignIn
       path="/sign-in"
       routing="path"
       signUpUrl="/sign-up" // 

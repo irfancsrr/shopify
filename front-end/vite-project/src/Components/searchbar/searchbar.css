@@ -1,0 +1,69 @@
+.searchBar{
+  /* margin-top: 5em; */
+  margin-bottom: 1em;
+  display: flex;
+  top: 6em !important;
+  width: 100%;
+  position:absolute;  
+  justify-content: center;
+  align-items: center;
+}
+
+.searchBar div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.searchBar .searchLabel{
+    transition: .3s;
+
+}
+.searchBar .searchLabel:active{
+    transform: scale(0.78);
+}
+.searchBar .searchLabel i{
+    font-size: 2em;
+    /* padding: 0 .4em; */
+}
+.searchBar input:focus{
+    border: 2px solid #a65ad9;
+    outline: none;
+}
+.searchBar input{
+    padding: 0.4em;
+    margin: 0 .7em;
+    border-radius: 1em;
+    border: 2px solid #e0cfeb;
+    width: 25em;
+    font-size: large;
+    transition: .5s;
+}
+@media (max-width:800px) {
+    
+  .searchBar{
+    top: 4.4em !important;
+  }
+
+}
+
+@media (max-width:700px) {
+    .searchBar input{
+    width: 20em;
+  }
+  
+
+}
+
+@media (max-width:500px) {
+    .searchBar input{
+    width: 17em;
+  }
+
+}
+
+@media (max-width:400px) {
+    .searchBar input{
+    width: 15em;
+  }
+
+}
