@@ -345,7 +345,7 @@ app.post("/signup", async (req, res) => {
 
 //creating end point for search data
 app.get("/search",async(req,res)=>{
-   const searchitem=req.query.searchItem;
+   const searchitem=req.query.searchItem; 
    let copystr=searchitem.toLowerCase().split(" ").filter(item=>{
     if(!item.toLowerCase().includes('men')&&!item.toLowerCase().includes('women')&&!item.toLowerCase().includes('kid')&&!item.toLowerCase().includes('boy')&&!item.toLowerCase().includes('girl')&&item!='to'&&item!='of'&&item!='for'&&item!='the'&&item!='a'&&item!='is')
       return item; 

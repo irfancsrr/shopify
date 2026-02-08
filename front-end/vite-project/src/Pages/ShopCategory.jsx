@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "./CSS/ShopCategory.css";
 import { ShopContext } from "../Context/ShopContext";
 import Item from "../Components/Item/Item";
@@ -7,9 +7,20 @@ import { useNavigate } from "react-router-dom";
 
 const ShopCategory = (props) => {
   const { allproduct } = useContext(ShopContext);
+  
   const navigateTo=useNavigate();
+ 
   return (
-    (allproduct?
+    (!allproduct||allproduct.length==0?
+       <div className="skeleton-wrapper">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="skeleton-card">
+                <div className="skeleton-img shimmer"></div>
+                <div className="skeleton-text shimmer"></div>
+                <div className="skeleton-text short shimmer"></div>
+              </div>
+            ))}
+          </div>:
       <div className="shopcategory">
      {props.category=='all'?<></>:<img className="shopcategory-banner" src={props.banner} alt="banners" />} 
       <div className="shopcategory-indexsort">
@@ -55,8 +66,7 @@ const ShopCategory = (props) => {
       {props.category=="all"?<></>:
       <div className="shopcategory-loadmore"onClick={()=>{navigateTo('/allproducts')}} style={{cursor:"pointer",textDecoration:"none"}} >Explore More</div>
       }
-    </div>:
-    <div className="loader" style={{margin:"6em auto"}}></div>
+    </div>
     )
   );
 };

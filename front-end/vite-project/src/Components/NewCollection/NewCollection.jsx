@@ -20,7 +20,20 @@ const NewCollection = () => {
       <h1>NEW COLLECTIONS</h1>
       <hr/>
       <div className="collections">
-        {New_collection?New_collection.map((item, i) => {
+        {!New_collection||New_collection.length==0?
+         <div className="Item-main-container">
+          <div className="skeleton-wrapper">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="skeleton-card">
+                <div className="skeleton-img shimmer"></div>
+                <div className="skeleton-text shimmer"></div>
+                <div className="skeleton-text short shimmer"></div>
+              </div>
+            ))}
+          </div>
+         </div>
+          
+        :New_collection.map((item, i) => {
           return (    
             <Item
               key={i}
@@ -31,7 +44,7 @@ const NewCollection = () => {
               old_price={item.old_price}
             />
           );
-        }):<div className="loader" style={{margin:"6em auto"}}></div>}
+        })}
       </div>
     </div>
   );
